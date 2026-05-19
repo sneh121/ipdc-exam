@@ -1,24 +1,22 @@
 <?php
-$host = 'localhost';
-$user = 'root';
-$pass = ''; // Default XAMPP password is empty
-$dbname = 'ipdc_exam';
+// Render.com Environment Variables Support + Fallback
+$host = $_ENV['DB_HOST'] ?? $_ENV['DATABASE_HOST'] ?? 'localhost';
+$user = $_ENV['DB_USERNAME'] ?? $_ENV['DATABASE_USER'] ?? 'root';
+$pass = $_ENV['DB_PASSWORD'] ?? $_ENV['DATABASE_PASSWORD'] ?? '';
+$dbname = $_ENV['DB_DATABASE'] ?? $_ENV['DATABASE_NAME'] ?? 'ipdc_exam';
 
-$conn = new mysqli($host, $user, $pass);
+$conn = new mysqli($host, $user, $pass, $dbname);
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Create database if not exists
-$sql = "CREATE DATABASE IF NOT EXISTS $dbname";
-if ($conn->query($sql) === TRUE) {
-    $conn->select_db($dbname);
-} else {
-    die("Error creating database: " . $conn->error);
-}
+// Create database if not exists (for safety)
+$sql = "CREATE DATABASE IF NOT EXISTS `$dbname`";
+$conn->query($sql);
+$conn->select_db($dbname);
 
-// Create users table
+// Create tables if not exist
 $sql = "CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
@@ -28,13 +26,6 @@ $sql = "CREATE TABLE IF NOT EXISTS users (
 )";
 $conn->query($sql);
 
-// Check if columns exist (for pre-existing tables)
-$result = $conn->query("SHOW COLUMNS FROM users LIKE 'score'");
-if ($result->num_rows == 0) {
-    $conn->query("ALTER TABLE users ADD COLUMN score INT DEFAULT 0, ADD COLUMN total INT DEFAULT 0");
-}
-
-// Create questions table
 $sql = "CREATE TABLE IF NOT EXISTS questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     question TEXT NOT NULL,
@@ -47,11 +38,6 @@ $sql = "CREATE TABLE IF NOT EXISTS questions (
 )";
 $conn->query($sql);
 
-// Check if section column exists (for pre-existing tables)
-$result = $conn->query("SHOW COLUMNS FROM questions LIKE 'section'");
-if ($result->num_rows == 0) {
-    $conn->query("ALTER TABLE questions ADD COLUMN section VARCHAR(10) DEFAULT 'A'");
-}
-
 $conn->set_charset("utf8");
+
 ?>
