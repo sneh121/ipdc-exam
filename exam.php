@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exam in Progress - IPDC</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
@@ -58,6 +58,6 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <script src="assets/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
